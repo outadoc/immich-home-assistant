@@ -4,7 +4,6 @@ from __future__ import annotations
 import logging
 from typing import Any
 from url_normalize import url_normalize
-from urllib.parse import urljoin
 from urllib.parse import urlparse
 
 import voluptuous as vol

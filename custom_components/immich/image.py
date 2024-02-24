@@ -15,8 +15,6 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 _LOGGER = logging.getLogger(__name__)
 
-REFRESH_INTERVAL = 10
-
 
 async def async_setup_entry(
     hass: HomeAssistant,
