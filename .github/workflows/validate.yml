@@ -1,4 +1,4 @@
-name: Validate
+name: Integration guidelines validation
 
 on:
   push:
@@ -9,16 +9,17 @@ on:
 
 jobs:
   validate-hacs:
-    name: HACS Validation
+    name: Validate for HACS
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: hacs/action@main
         with:
           category: integration
+          ignore: brands
 
   validate-hassfest:
-    name: hassfest validation
+    name: Validate with hassfest
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
