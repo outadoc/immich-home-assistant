@@ -43,6 +43,14 @@ You can then use this dashboard on a dedicated device in kiosk mode.
 
 You could even display in onto a Nest Hub device with the [Home Assistant Cast](https://www.home-assistant.io/integrations/cast/#home-assistant-cast) feature − you can finally say goodbye to Google Photos! 🎉
 
+```yaml
+- service: cast.show_lovelace_view
+  data:
+    entity_id: media_player.<your-chromecast-device>
+    dashboard_path: lovelace
+    view_path: photo-frame
+```
+
 ![A Nest Hub 2 showing a cat picture, straight from Home Assistant](assets/demo.jpg)
 
 ## How does it work?
