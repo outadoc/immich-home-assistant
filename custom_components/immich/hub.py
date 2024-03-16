@@ -1,10 +1,10 @@
 """Hub for Immich integration."""
 from __future__ import annotations
 
-import aiohttp
 import logging
 from urllib.parse import urljoin
-import random
+
+import aiohttp
 
 from homeassistant.exceptions import HomeAssistantError
 
@@ -33,9 +33,9 @@ class ImmichHub:
                         _LOGGER.error("Error from API: body=%s", raw_result)
                         return False
 
-                    json_result = await response.json()
+                    auth_result = await response.json()
 
-                    if not json_result.get("authStatus"):
+                    if not auth_result.get("authStatus"):
                         raw_result = await response.text()
                         _LOGGER.error("Error from API: body=%s", raw_result)
                         return False
@@ -45,21 +45,25 @@ class ImmichHub:
             _LOGGER.error("Error connecting to the API: %s", exception)
             raise CannotConnect from exception
 
-    async def get_random_picture(self) -> dict | None:
-        """Get a random picture from the API."""
-        assets = [
-            asset for asset in await self._list_favorites() if asset["type"] == "IMAGE"
-        ]
+    async def get_my_user_info(self) -> dict:
+        """Get user info."""
+        try:
+            async with aiohttp.ClientSession() as session:
+                url = urljoin(self.host, "/api/user/me")
+                headers = {"Accept": "application/json", _HEADER_API_KEY: self.api_key}
 
-        if not assets:
-            _LOGGER.error("No assets found in favorites")
-            return None
+                async with session.get(url=url, headers=headers) as response:
+                    if response.status != 200:
+                        raw_result = await response.text()
+                        _LOGGER.error("Error from API: body=%s", raw_result)
+                        raise ApiError()
 
-        # Select random item in list
-        random_asset = random.choice(assets)
+                    user_info: dict = await response.json()
 
-        _LOGGER.debug("Random asset: %s", random_asset)
-        return random_asset
+                    return user_info
+        except aiohttp.ClientError as exception:
+            _LOGGER.error("Error connecting to the API: %s", exception)
+            raise CannotConnect from exception
 
     async def download_asset(self, asset_id: str) -> bytes:
         """Download the asset."""
@@ -78,7 +82,8 @@ class ImmichHub:
             _LOGGER.error("Error connecting to the API: %s", exception)
             raise CannotConnect from exception
 
-    async def _list_favorites(self) -> list[dict]:
+    async def list_favorite_images(self) -> list[dict]:
+        """List all favorite images."""
         try:
             async with aiohttp.ClientSession() as session:
                 url = urljoin(self.host, "/api/asset?isFavorite=true")
@@ -90,9 +95,58 @@ class ImmichHub:
                         _LOGGER.error("Error from API: body=%s", raw_result)
                         raise ApiError()
 
-                    json_result = await response.json()
+                    assets: list[dict] = await response.json()
 
-                    return json_result
+                    filtered_assets: list[dict] = [
+                        asset for asset in assets if asset["type"] == "IMAGE"
+                    ]
+
+                    return filtered_assets
+        except aiohttp.ClientError as exception:
+            _LOGGER.error("Error connecting to the API: %s", exception)
+            raise CannotConnect from exception
+
+    async def list_all_albums(self) -> list[dict]:
+        """List all albums."""
+        try:
+            async with aiohttp.ClientSession() as session:
+                url = urljoin(self.host, "/api/album")
+                headers = {"Accept": "application/json", _HEADER_API_KEY: self.api_key}
+
+                async with session.get(url=url, headers=headers) as response:
+                    if response.status != 200:
+                        raw_result = await response.text()
+                        _LOGGER.error("Error from API: body=%s", raw_result)
+                        raise ApiError()
+
+                    album_list: list[dict] = await response.json()
+
+                    return album_list
+        except aiohttp.ClientError as exception:
+            _LOGGER.error("Error connecting to the API: %s", exception)
+            raise CannotConnect from exception
+
+    async def list_album_images(self, album_id: str) -> list[dict]:
+        """List all images in an album."""
+        try:
+            async with aiohttp.ClientSession() as session:
+                url = urljoin(self.host, f"/api/album/{album_id}")
+                headers = {"Accept": "application/json", _HEADER_API_KEY: self.api_key}
+
+                async with session.get(url=url, headers=headers) as response:
+                    if response.status != 200:
+                        raw_result = await response.text()
+                        _LOGGER.error("Error from API: body=%s", raw_result)
+                        raise ApiError()
+
+                    album_info: dict = await response.json()
+                    assets: list[dict] = album_info["assets"]
+
+                    filtered_assets: list[dict] = [
+                        asset for asset in assets if asset["type"] == "IMAGE"
+                    ]
+
+                    return filtered_assets
         except aiohttp.ClientError as exception:
             _LOGGER.error("Error connecting to the API: %s", exception)
             raise CannotConnect from exception

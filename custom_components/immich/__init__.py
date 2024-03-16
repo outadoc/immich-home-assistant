@@ -2,16 +2,13 @@
 from __future__ import annotations
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import Platform
-from homeassistant.const import CONF_HOST, CONF_API_KEY
+from homeassistant.const import CONF_API_KEY, CONF_HOST, Platform
 from homeassistant.core import HomeAssistant
-from datetime import timedelta
 
 from .const import DOMAIN
 from .hub import ImmichHub, InvalidAuth
 
 PLATFORMS: list[Platform] = [Platform.IMAGE]
-SCAN_INTERVAL = timedelta(minutes=5)
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:

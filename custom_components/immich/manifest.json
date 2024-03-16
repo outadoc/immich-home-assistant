@@ -1,19 +1,15 @@
 {
   "domain": "immich",
   "name": "Immich",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "codeowners": ["@outadoc"],
   "config_flow": true,
   "dependencies": [],
   "documentation": "https://github.com/outadoc/immich-home-assistant",
-  "issue_tracker": "https://github.com/outadoc/immich-home-assistant/issues",
   "homekit": {},
   "iot_class": "cloud_polling",
-  "requirements": [
-    "url-normalize==1.4.3",
-    "aiohttp==3.9.3",
-    "urllib3>=1.26.5,<2"
-  ],
+  "issue_tracker": "https://github.com/outadoc/immich-home-assistant/issues",
+  "requirements": ["url-normalize==1.4.3"],
   "ssdp": [],
   "zeroconf": []
 }

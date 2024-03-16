@@ -16,5 +16,14 @@
     "abort": {
       "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "watched_albums": "Albums for which entities will be created"
+        }
+      }
+    }
   }
 }

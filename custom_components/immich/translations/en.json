@@ -16,5 +16,14 @@
                 }
             }
         }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "data": {
+                    "watched_albums": "Albums for which entities will be created"
+                }
+            }
+        }
     }
 }
