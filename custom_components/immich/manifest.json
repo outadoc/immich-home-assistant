@@ -10,6 +10,6 @@
   "issue_tracker": "https://github.com/outadoc/immich-home-assistant/issues",
   "requirements": ["url-normalize==1.4.3"],
   "ssdp": [],
-  "version": "0.1.0",
+  "version": "0.2.0",
   "zeroconf": []
 }

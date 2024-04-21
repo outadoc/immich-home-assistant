@@ -1,6 +1,7 @@
 """Image device for Immich integration."""
 from __future__ import annotations
 
+import asyncio
 from datetime import datetime, timedelta
 import logging
 import random
@@ -113,10 +114,20 @@ class BaseImmichImage(ImageEntity):
 
     async def _load_and_cache_next_image(self) -> None:
         """Download and cache the image."""
-        asset_id = await self._get_next_asset_id()
+        asset_bytes = None
 
-        if asset_id:
+        while not asset_bytes:
+            asset_id = await self._get_next_asset_id()
+
+            if not asset_id:
+                return
+
             asset_bytes = await self.hub.download_asset(asset_id)
+
+            if not asset_bytes:
+                await asyncio.sleep(1)
+                continue
+
             self._current_image_bytes = asset_bytes
             self._attr_image_last_updated = datetime.now()
 

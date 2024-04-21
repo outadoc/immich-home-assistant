@@ -11,6 +11,8 @@ from homeassistant.exceptions import HomeAssistantError
 _HEADER_API_KEY = "x-api-key"
 _LOGGER = logging.getLogger(__name__)
 
+_ALLOWED_MIME_TYPES = ["image/png", "image/jpeg"]
+
 
 class ImmichHub:
     """Immich API hub."""
@@ -65,7 +67,7 @@ class ImmichHub:
             _LOGGER.error("Error connecting to the API: %s", exception)
             raise CannotConnect from exception
 
-    async def download_asset(self, asset_id: str) -> bytes:
+    async def download_asset(self, asset_id: str) -> bytes | None:
         """Download the asset."""
         try:
             async with aiohttp.ClientSession() as session:
@@ -75,7 +77,13 @@ class ImmichHub:
                 async with session.get(url=url, headers=headers) as response:
                     if response.status != 200:
                         _LOGGER.error("Error from API: status=%d", response.status)
-                        raise ApiError()
+                        return None
+
+                    if response.content_type not in _ALLOWED_MIME_TYPES:
+                        _LOGGER.error(
+                            "MIME type is not supported: %s", response.content_type
+                        )
+                        return None
 
                     return await response.read()
         except aiohttp.ClientError as exception:
