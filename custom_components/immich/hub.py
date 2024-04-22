@@ -118,7 +118,7 @@ class ImmichHub:
         """List all albums."""
         try:
             async with aiohttp.ClientSession() as session:
-                url = urljoin(self.host, "/api/album")
+                url = urljoin(self.host, "/api/album?shared=true")
                 headers = {"Accept": "application/json", _HEADER_API_KEY: self.api_key}
 
                 async with session.get(url=url, headers=headers) as response:
