@@ -67,6 +67,26 @@ class ImmichHub:
             _LOGGER.error("Error connecting to the API: %s", exception)
             raise CannotConnect from exception
 
+    async def get_asset_info(self, asset_id: str) -> dict | None:
+        """Get asset info."""
+        try:
+            async with aiohttp.ClientSession() as session:
+                url = urljoin(self.host, f"/api/asset/{asset_id}")
+                headers = {"Accept": "application/json", _HEADER_API_KEY: self.api_key}
+
+                async with session.get(url=url, headers=headers) as response:
+                    if response.status != 200:
+                        raw_result = await response.text()
+                        _LOGGER.error("Error from API: body=%s", raw_result)
+                        raise ApiError()
+
+                    asset_info: dict = await response.json()
+
+                    return asset_info
+        except aiohttp.ClientError as exception:
+            _LOGGER.error("Error connecting to the API: %s", exception)
+            raise CannotConnect from exception
+
     async def download_asset(self, asset_id: str) -> bytes | None:
         """Download the asset."""
         try:
