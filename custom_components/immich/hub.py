@@ -71,7 +71,7 @@ class ImmichHub:
         """Get asset info."""
         try:
             async with aiohttp.ClientSession() as session:
-                url = urljoin(self.host, f"/api/asset/{asset_id}")
+                url = urljoin(self.host, f"/api/assets/{asset_id}")
                 headers = {"Accept": "application/json", _HEADER_API_KEY: self.api_key}
 
                 async with session.get(url=url, headers=headers) as response:

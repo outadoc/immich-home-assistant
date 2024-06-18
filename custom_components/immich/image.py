@@ -131,10 +131,16 @@ class BaseImmichImage(ImageEntity):
                 continue
 
             asset_info = await self.hub.get_asset_info(asset_id)
-            
-            self._attr_extra_state_attributes["media_filename"] = (asset_info.get('originalFileName') or '')
-            self._attr_extra_state_attributes["media_exifInfo"] = (asset_info.get('exifInfo') or '')
-            self._attr_extra_state_attributes["media_localdatetime"] = (asset_info.get('localDateTime ') or '')
+
+            self._attr_extra_state_attributes["media_filename"] = (
+                asset_info.get("originalFileName") or ""
+            )
+            self._attr_extra_state_attributes["media_exif"] = (
+                asset_info.get("exifInfo") or ""
+            )
+            self._attr_extra_state_attributes["media_localdatetime"] = (
+                asset_info.get("localDateTime") or ""
+            )
 
             self._current_image_bytes = asset_bytes
             self._attr_image_last_updated = datetime.now()
